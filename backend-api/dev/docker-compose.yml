@@ -1,0 +1,41 @@
+services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - /data/db
+      - ./routes:/app/app
+    networks:
+      - mongo-express-network
+      - api-network
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: false
+      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
+      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+    networks:
+      - mongo-express-network
+
+  api:
+    image: marwenaddinn/api-session13
+    ports:
+      - 3000:3001
+    env_file:
+      - .env
+    networks:
+    - api-network
+
+volumes:
+  mongo-volume:
+
+
+networks:
+  mongo-express-network:
+  api-network:
