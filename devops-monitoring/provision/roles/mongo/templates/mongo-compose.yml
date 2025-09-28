@@ -1,0 +1,30 @@
+# Define the name of the Docker Compose project
+name: mongodb-stack
+
+# Services section defines all the containers in the stack
+services:
+  # mongodb service definition
+  mongodb:
+    container_name: mongodb                  # Name of the container
+    image: mongo:latest                       # Use the latest official MongoDB image
+    restart: always                           # Always restart the container if it stops
+    environment:
+      # Environment variables to initialize MongoDB
+      - MONGO_INITDB_ROOT_USERNAME=root       # Root username for MongoDB.
+      - MONGO_INITDB_ROOT_PASSWORD=pass-123   # Root password for MongoDB.
+      - MONGO_INITDB_DATABASE=book-store      # Default database to create on initialization
+    ports:
+      - "27017:27017"                         # Map port 27017 on the host to port 27017 in the container
+    volumes:
+      - mongodb-volume:/data/db               # Persist MongoDB data in a named volume (mongodb-volume)
+    networks:
+      - backend-api-net                        # Attach this container to a custom network (backend-api-net)
+
+# Volumes section defines named volumes for persistent data
+volumes:
+  mongodb-volume:                            # Define a named volume for MongoDB data storage
+
+# Networks section defines the networks used by the containers
+networks:
+  backend-api-net:
+    name: backend-api-net                           # Use the bridge driver for the custom network

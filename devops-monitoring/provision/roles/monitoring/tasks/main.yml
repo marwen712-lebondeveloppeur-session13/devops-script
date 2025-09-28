@@ -1,0 +1,31 @@
+# Install necessary dependencies (pip3 and python3-docker)
+- name: Install necessary dependencies
+  apt:
+    name:
+      - python3-pip              # pip3 for Python package management
+      - python3-docker           # Docker Python module for integration with Ansible
+    state: present                # Ensure both packages are installed
+  become: true                    # Run with elevated privileges
+
+# Create the monitoring stack directory (if not exists)
+- name: Create monitoring-stack directory
+  file:
+    path: /opt/monitoring-stack     # Directory path where the configuration files will reside
+    state: directory               # Ensure it is a directory
+    mode: '0755'                   # Set directory permissions (owner can read/write/execute, others can read/execute)
+
+# Deploy configuration files (using with_items to loop through files)
+- name: Deploy configuration files
+  template:
+    src: "{{ item.src }}"            # Use variable for source file
+    dest: "{{ item.dest }}"          # Use variable for destination path
+    mode: '0644'                     # Set file permissions (owner can read/write, others can read-only)
+  with_items:
+    - { src: "monitoring-compose.yml", dest: "/opt/monitoring-stack/docker-compose.yml" }
+    - { src: "prometheus.yml", dest: "/opt/monitoring-stack/prometheus.yml" }
+
+# Deploy the monitoring stack using Docker Compose v2
+- name: Deploy Monitoring with Docker Compose v2
+  community.docker.docker_compose_v2:
+    project_src: /opt/monitoring-stack  # Path to the directory containing the docker-compose.yml
+    state: present                      # Ensure the services are up and running

@@ -1,0 +1,26 @@
+# Global configuration
+global:
+  scrape_interval:     120s        # Default scrape interval (every 120 seconds)
+  evaluation_interval: 120s        # Default evaluation interval for rules
+
+  # Labels attached to time series or alerts when communicating with external systems
+  external_labels:
+    monitor: 'my-project'
+
+# Load and evaluate rule files (uncomment if needed)
+rule_files:
+  # - "alert.rules"
+  # - "first.rules"
+  # - "second.rules"
+
+# Scrape configuration
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    scrape_interval: 120s          # Override global scrape interval for this job
+
+    static_configs:
+      - targets:
+          - 'localhost:9090'       # Prometheus
+          - 'cadvisor:8080'        # cAdvisor for container metrics.
+          - 'node-exporter:9100'   # Node Exporter for system metrics

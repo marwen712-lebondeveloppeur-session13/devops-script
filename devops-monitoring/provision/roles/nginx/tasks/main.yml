@@ -1,0 +1,37 @@
+  # Install Nginx
+  - name: Install Nginx
+    apt:
+      name: nginx
+      state: latest
+
+  # Start and enable Nginx service
+  - name: Start and enable Nginx service
+    systemd:
+      name: nginx
+      state: started
+      enabled: yes
+
+  # Verify Nginx installation
+  - name: Verify Nginx installation
+    command: nginx -v
+    register: nginx_version
+    changed_when: false
+
+  # Show Nginx version
+  - name: Show Nginx version
+    debug:
+      msg: "Nginx version: {{ nginx_version.stderr }}"
+
+  # Add stub_status location block to Nginx config
+  - name: Add stub_status location block to Nginx config
+    ansible.builtin.blockinfile:
+      path: /etc/nginx/sites-available/default
+      marker: "# {mark} ANSIBLE MANAGED BLOCK STUB STATUS"
+      insertafter: '^\s*server\s*{'
+      block: |
+        location /stub_status {
+            stub_status;
+            allow 127.0.0.1;
+            deny all;
+        }
+    notify: Reload nginx

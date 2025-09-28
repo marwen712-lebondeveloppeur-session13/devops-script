@@ -1,0 +1,33 @@
+# Install pip3 (Python package manager)
+- name: Install pip3
+  apt:
+    name: python3-pip           # pip3 is used to install Python packages
+    state: present              # Ensure it is installed
+  become: true                  # Run with elevated privileges
+
+# Install the docker Python module via apt
+- name: Install docker Python module via apt
+  apt:
+    name: python3-docker        # This module allows Ansible to interact with Docker
+    state: present              # Ensure it is installed
+  become: true
+
+# Create a directory to store the Docker Compose configuration for MongoDB
+- name: Create mongo-compose directory
+  file:
+    path: /opt/mongodb-stack    # Directory path where the docker-compose file will reside
+    state: directory            # Ensure it is a directory
+    mode: '0755'                # Set permissions (owner can read/write/execute, others can read/execute)
+
+# Copy the Docker Compose file from the templates directory to the target machine
+- name: Deploy Docker Compose file
+  template:
+    src: mongo-compose.yml      # Source Jinja2 template file (or plain YAML if no variables are used)
+    dest: /opt/mongodb-stack/docker-compose.yml  # Destination path
+    mode: '0644'                # Set file permissions (owner can read/write, others read-only)
+
+# Deploy the MongoDB stack using Docker Compose v2
+- name: Deploy MongoDB with Docker Compose v2
+  community.docker.docker_compose_v2:
+    project_src: /opt/mongodb-stack  # Path to the docker-compose.yml file
+    state: present                   # Ensure the services are up and running
