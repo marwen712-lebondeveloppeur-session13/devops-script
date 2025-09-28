@@ -31,7 +31,7 @@ jobs:
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2  # Action to run the playbook
         with:
-          playbook: provision/playbook.yml               # Path to the playbook
+          playbook: devops-monitoring/provision/playbook.yml               # Path to the playbook
           inventory: "${{ secrets.VPS_HOST }}"          # VPS host address from secrets
           options: >
             --extra-vars "ansible_user=${{ secrets.VPS_USERNAME }} ansible_password=${{ secrets.VPS_PASSWORD }} ansible_become=yes ansible_python_interpreter=/usr/bin/python3.12"
