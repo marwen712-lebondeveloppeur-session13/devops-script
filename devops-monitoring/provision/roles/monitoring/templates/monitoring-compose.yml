@@ -12,8 +12,8 @@ services:
       - prometheus_data:/prometheus                          # Persistent data for Prometheus
     expose:
       - 9090                                                 # Internal port (for other Docker services)
-    ports:
-      - 9090:9090                                            # Exposed port for external access
+    # ports:
+    #   - 9090:9090                                            # Exposed port for external access
     links:
       - cadvisor:cadvisor
       - node-exporter:node-exporter
